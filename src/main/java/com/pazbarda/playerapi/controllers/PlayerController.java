@@ -1,6 +1,8 @@
 package com.pazbarda.playerapi.controllers;
 
 import com.pazbarda.playerapi.model.PlayerDTO;
+import com.pazbarda.playerapi.services.PlayerDAO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -9,31 +11,34 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashSet;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 @RestController
 public class PlayerController {
 
+    @Autowired
+    private PlayerDAO playerDAO;
+
     @GetMapping("/api/players")
     public Set<String> getAllPlayerIDs() {
-        return new HashSet<>() {{
-            add("qweqwe");
-            add("zxczxc");
-        }};
+        return playerDAO.getPlayerIDs();
     }
 
     @GetMapping("/api/player/{playerID}")
     public PlayerDTO getPlayerByID(@PathVariable String playerID) {
         validatePlayerID(playerID);
-        return new PlayerDTO.Builder("abcdef")
-                .withNameFirst("John")
-                .withNameLast("Doe")
-                .build();
+        return playerDAO.getPlayer(playerID);
     }
 
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
-        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+//    @ExceptionHandler(IllegalArgumentException.class)
+//    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
+//        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+//    }
+
+    @ExceptionHandler(NoSuchElementException.class)
+    public ResponseEntity<String> handleNoSuchElementException(NoSuchElementException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
     private void validatePlayerID(String playerID) {

@@ -1,7 +1,6 @@
 package com.pazbarda.playerapi.model;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.format.ResolverStyle;
@@ -11,7 +10,7 @@ import java.util.Objects;
 // playerID,birthYear,birthMonth,birthDay,birthCountry,birthState,birthCity,deathYear,deathMonth,deathDay,deathCountry,deathState,deathCity,nameFirst,nameLast,nameGiven,weight,height,bats,throws,debut,finalGame,retroID,bbrefID
 // TODO PB -- create a struct for place (Country, State, City)
 public class PlayerDTO {
-    private String playerID;
+    private final String playerID;
     private LocalDate dateOfBirth;
     private String birthCountry;
     private String birthState;
@@ -23,12 +22,12 @@ public class PlayerDTO {
     private String nameFirst;
     private String nameLast;
     private String nameGiven;
-    private int weight;
-    private int height;
+    private Integer weight;
+    private Integer height;
     private String bats;
     private String shoots;
-    private LocalDate dateOfDebut;
-    private LocalDate dateOfFinalGame;
+    private String dateOfDebutString;
+    private String dateOfFinalGameString;
     private String retroID;
     private String bbrefID;
 
@@ -84,11 +83,11 @@ public class PlayerDTO {
         return nameGiven;
     }
 
-    public int getWeight() {
+    public Integer getWeight() {
         return weight;
     }
 
-    public int getHeight() {
+    public Integer getHeight() {
         return height;
     }
 
@@ -100,12 +99,12 @@ public class PlayerDTO {
         return shoots;
     }
 
-    public LocalDate getDateOfDebut() {
-        return dateOfDebut;
+    public String getDateOfDebutString() {
+        return dateOfDebutString;
     }
 
-    public LocalDate getDateOfFinalGame() {
-        return dateOfFinalGame;
+    public String getDateOfFinalGameString() {
+        return dateOfFinalGameString;
     }
 
     public String getRetroID() {
@@ -121,7 +120,7 @@ public class PlayerDTO {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PlayerDTO playerDTO = (PlayerDTO) o;
-        return weight == playerDTO.weight && height == playerDTO.height && Objects.equals(playerID, playerDTO.playerID) && Objects.equals(dateOfBirth, playerDTO.dateOfBirth) && Objects.equals(birthCountry, playerDTO.birthCountry) && Objects.equals(birthState, playerDTO.birthState) && Objects.equals(birthCity, playerDTO.birthCity) && Objects.equals(dateOfDeath, playerDTO.dateOfDeath) && Objects.equals(deathCountry, playerDTO.deathCountry) && Objects.equals(deathState, playerDTO.deathState) && Objects.equals(deathCity, playerDTO.deathCity) && Objects.equals(nameFirst, playerDTO.nameFirst) && Objects.equals(nameLast, playerDTO.nameLast) && Objects.equals(nameGiven, playerDTO.nameGiven) && Objects.equals(bats, playerDTO.bats) && Objects.equals(shoots, playerDTO.shoots) && Objects.equals(dateOfDebut, playerDTO.dateOfDebut) && Objects.equals(dateOfFinalGame, playerDTO.dateOfFinalGame) && Objects.equals(retroID, playerDTO.retroID) && Objects.equals(bbrefID, playerDTO.bbrefID);
+        return weight == playerDTO.weight && height == playerDTO.height && Objects.equals(playerID, playerDTO.playerID) && Objects.equals(dateOfBirth, playerDTO.dateOfBirth) && Objects.equals(birthCountry, playerDTO.birthCountry) && Objects.equals(birthState, playerDTO.birthState) && Objects.equals(birthCity, playerDTO.birthCity) && Objects.equals(dateOfDeath, playerDTO.dateOfDeath) && Objects.equals(deathCountry, playerDTO.deathCountry) && Objects.equals(deathState, playerDTO.deathState) && Objects.equals(deathCity, playerDTO.deathCity) && Objects.equals(nameFirst, playerDTO.nameFirst) && Objects.equals(nameLast, playerDTO.nameLast) && Objects.equals(nameGiven, playerDTO.nameGiven) && Objects.equals(bats, playerDTO.bats) && Objects.equals(shoots, playerDTO.shoots) && Objects.equals(dateOfDebutString, playerDTO.dateOfDebutString) && Objects.equals(dateOfFinalGameString, playerDTO.dateOfFinalGameString) && Objects.equals(retroID, playerDTO.retroID) && Objects.equals(bbrefID, playerDTO.bbrefID);
     }
 
     @Override
@@ -143,8 +142,8 @@ public class PlayerDTO {
                 ", height=" + height +
                 ", bats='" + bats + '\'' +
                 ", shoots='" + shoots + '\'' +
-                ", dateOfDebut=" + dateOfDebut +
-                ", dateOfFinalGame=" + dateOfFinalGame +
+                ", dateOfDebut=" + dateOfDebutString +
+                ", dateOfFinalGame=" + dateOfFinalGameString +
                 ", retroID='" + retroID + '\'' +
                 ", bbrefID='" + bbrefID + '\'' +
                 '}';
@@ -152,12 +151,11 @@ public class PlayerDTO {
 
     @Override
     public int hashCode() {
-        return Objects.hash(playerID, dateOfBirth, birthCountry, birthState, birthCity, dateOfDeath, deathCountry, deathState, deathCity, nameFirst, nameLast, nameGiven, weight, height, bats, shoots, dateOfDebut, dateOfFinalGame, retroID, bbrefID);
+        return Objects.hash(playerID, dateOfBirth, birthCountry, birthState, birthCity, dateOfDeath, deathCountry, deathState, deathCity, nameFirst, nameLast, nameGiven, weight, height, bats, shoots, dateOfDebutString, dateOfFinalGameString, retroID, bbrefID);
     }
 
     public static class Builder {
         private PlayerDTO playerDTO;
-        private final DateTimeFormatter dateTimeFormatter = getDateTimeFormatter();
 
         public Builder(String playerID) {
             playerDTO = new PlayerDTO(playerID);
@@ -239,12 +237,22 @@ public class PlayerDTO {
         }
 
         public Builder withDateOfDebut(String debutDateString) {
-            playerDTO.dateOfDebut = LocalDate.parse(debutDateString, dateTimeFormatter);
+            playerDTO.dateOfDebutString = debutDateString;
             return this;
         }
 
         public Builder withDateOfFinalGame(String finalGameDateString) {
-            playerDTO.dateOfFinalGame = LocalDate.parse(finalGameDateString, dateTimeFormatter);
+            playerDTO.dateOfFinalGameString = finalGameDateString;
+            return this;
+        }
+
+        public Builder withRetroID(String retroID) {
+            playerDTO.retroID = retroID;
+            return this;
+        }
+
+        public Builder withBbrefID(String bbrefID) {
+            playerDTO.bbrefID = bbrefID;
             return this;
         }
 
@@ -252,12 +260,5 @@ public class PlayerDTO {
             return playerDTO;
         }
 
-        private DateTimeFormatter getDateTimeFormatter() {
-            return new DateTimeFormatterBuilder()
-                    .appendOptional(DateTimeFormatter.ofPattern("M/d/yyyy"))
-                    .appendOptional(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
-                    .toFormatter(Locale.ENGLISH)
-                    .withResolverStyle(ResolverStyle.STRICT);
-        }
     }
 }
