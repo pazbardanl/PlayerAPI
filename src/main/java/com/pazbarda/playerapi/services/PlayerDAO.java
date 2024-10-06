@@ -23,7 +23,6 @@ public class PlayerDAO {
     @Autowired
     private PlayerCsvDecoder playerCsvDecoder;
 
-    // TODO PB -- make its own service?
     private Map<String, PlayerDTO> playersCache;
 
     @PostConstruct
@@ -31,7 +30,6 @@ public class PlayerDAO {
         this.playersCache = getPlayersCache(PLAYERS_CSV_PATH);
 
     }
-
 
     public PlayerDTO getPlayer(String playerID) throws NoSuchElementException {
         return Optional.ofNullable(playersCache.get(playerID))
