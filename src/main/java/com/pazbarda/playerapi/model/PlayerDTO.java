@@ -125,6 +125,32 @@ public class PlayerDTO {
     }
 
     @Override
+    public String toString() {
+        return "PlayerDTO{" +
+                "playerID='" + playerID + '\'' +
+                ", dateOfBirth=" + dateOfBirth +
+                ", birthCountry='" + birthCountry + '\'' +
+                ", birthState='" + birthState + '\'' +
+                ", birthCity='" + birthCity + '\'' +
+                ", dateOfDeath=" + dateOfDeath +
+                ", deathCountry='" + deathCountry + '\'' +
+                ", deathState='" + deathState + '\'' +
+                ", deathCity='" + deathCity + '\'' +
+                ", nameFirst='" + nameFirst + '\'' +
+                ", nameLast='" + nameLast + '\'' +
+                ", nameGiven='" + nameGiven + '\'' +
+                ", weight=" + weight +
+                ", height=" + height +
+                ", bats='" + bats + '\'' +
+                ", shoots='" + shoots + '\'' +
+                ", dateOfDebut=" + dateOfDebut +
+                ", dateOfFinalGame=" + dateOfFinalGame +
+                ", retroID='" + retroID + '\'' +
+                ", bbrefID='" + bbrefID + '\'' +
+                '}';
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(playerID, dateOfBirth, birthCountry, birthState, birthCity, dateOfDeath, deathCountry, deathState, deathCity, nameFirst, nameLast, nameGiven, weight, height, bats, shoots, dateOfDebut, dateOfFinalGame, retroID, bbrefID);
     }
