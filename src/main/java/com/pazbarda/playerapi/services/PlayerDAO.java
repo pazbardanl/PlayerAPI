@@ -1,11 +1,14 @@
 package com.pazbarda.playerapi.services;
 
+import com.pazbarda.playerapi.controllers.PlayerController;
 import com.pazbarda.playerapi.model.PlayerDTO;
 import com.pazbarda.playerapi.model.PlayerRawData;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -16,12 +19,14 @@ import java.util.*;
 
 /*
  * Data Access Object for player data. Provides abstraction over the data source (CSV file)
- * Yes, there must be a better name than DAO out there, I just couldn't find it at the time of implementing this class4
+ * Yes, there must be a better name than DAO out there, I just couldn't find it at the time of implementing this class
  *
  * This class initiates a cache at startup (as opposed to on-the-go), due to the nature of CSV format (no effective way of reading a specific line or querying it).
  * */
 @Service
 public class PlayerDAO {
+
+    private static final Logger logger = LoggerFactory.getLogger(PlayerDAO.class);
 
     /*
      * path to CSV file, taken from .properties file
@@ -39,8 +44,8 @@ public class PlayerDAO {
 
     @PostConstruct
     public void init() throws IOException {
+        logger.info("cache initialized from file: " + PLAYERS_CSV_PATH);
         this.playersCache = getPlayersCache(PLAYERS_CSV_PATH);
-
     }
 
     /*
@@ -49,7 +54,6 @@ public class PlayerDAO {
      * */
     public PlayerDTO getPlayer(String playerID) throws NoSuchElementException {
         return Optional.ofNullable(playersCache.get(playerID))
-                // TODO PB -- logging
                 .orElseThrow(() -> new NoSuchElementException("player ID " + playerID + " not found"));
     }
 
@@ -60,7 +64,6 @@ public class PlayerDAO {
         return playersCache.keySet();
     }
 
-    // TODO PB -- logging
     private Map<String, PlayerDTO> getPlayersCache(String csvPath) throws IOException {
         validateCsvPath(csvPath);
         return getPlayerDTOsFromCsv(csvPath);
@@ -78,7 +81,7 @@ public class PlayerDAO {
         int lineCounter = 0;
         try (BufferedReader reader = new BufferedReader(new FileReader(csvPath))) {
             String headerLine = reader.readLine();
-            System.out.println("Skipped header line: " + headerLine);
+            logger.info("Skipped header line: " + headerLine);
             String line;
             while ((line = reader.readLine()) != null) {
                 PlayerDTO playerDTO = buildPlayerDTO(line);
@@ -86,8 +89,7 @@ public class PlayerDAO {
                 lineCounter++;
             }
         } catch (IOException e) {
-            // TODO PB -- Handle the exception appropriately, with logging
-            throw new IOException("error reading players CSV file at line " + lineCounter);
+            logger.error("error reading players CSV file at line " + lineCounter);
         }
         return cache;
     }
