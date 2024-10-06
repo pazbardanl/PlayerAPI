@@ -1,9 +1,10 @@
 package com.pazbarda.playerapi.services;
 
 import com.pazbarda.playerapi.model.PlayerDTO;
+import com.pazbarda.playerapi.model.PlayerRawData;
 import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.info.ProjectInfoProperties;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -18,6 +19,9 @@ public class PlayerDAO {
 
     @Value("${players.csv.path}")
     private String PLAYERS_CSV_PATH;
+
+    @Autowired
+    private PlayerCsvDecoder playerCsvDecoder;
 
     // TODO PB -- make its own service?
     private Map<String, PlayerDTO> playersCache;
@@ -67,69 +71,38 @@ public class PlayerDAO {
 
     // TODO PB -- extract this to a package helper class
     private PlayerDTO buildPlayerDTO(String csvLine) {
-        String[] csvLineTokens = csvLine.split(",");
-        String playerID = csvLineTokens[0];
-        if (null == playerID || playerID.isEmpty() || playerID.isBlank()) {
+        PlayerRawData playerRawData = playerCsvDecoder.decode(csvLine);
+
+        if (null == playerRawData.playerID() || playerRawData.playerID().isEmpty() || playerRawData.playerID().isBlank()) {
             throw new IllegalArgumentException("invalid playerID");
         }
-        Integer birthYear = csvLineTokens.length > 1 ? safeParseIntegerFrom(csvLineTokens[1]) : null;
-        Integer birthMonth = csvLineTokens.length > 2 ? safeParseIntegerFrom(csvLineTokens[2]) : null;
-        Integer birthDay = csvLineTokens.length > 3 ? safeParseIntegerFrom(csvLineTokens[3]) : null;
-        String birthCountry = csvLineTokens.length > 4 ? csvLineTokens[4] : null;
-        String birthState = csvLineTokens.length > 5 ? csvLineTokens[5] : null;
-        String birthCity = csvLineTokens.length > 6 ? csvLineTokens[6] : null;
-        Integer deathYear = csvLineTokens.length > 7 ? safeParseIntegerFrom(csvLineTokens[7]) : null;
-        Integer deathMonth = csvLineTokens.length > 8 ? safeParseIntegerFrom(csvLineTokens[8]) : null;
-        Integer deathDay = csvLineTokens.length > 9 ? safeParseIntegerFrom(csvLineTokens[9]) : null;
-        String deathCountry = csvLineTokens.length > 10 ? csvLineTokens[10] : null;
-        String deathState = csvLineTokens.length > 11 ? csvLineTokens[11] : null;
-        String deathCity = csvLineTokens.length > 12 ? csvLineTokens[12] : null;
-        String nameFirst = csvLineTokens.length > 13 ? csvLineTokens[13] : null;
-        String nameLast = csvLineTokens.length > 14 ? csvLineTokens[14] : null;
-        String nameGiven = csvLineTokens.length > 15 ? csvLineTokens[15] : null;
-        Integer weight = csvLineTokens.length > 16 ? safeParseIntegerFrom(csvLineTokens[16]) : null;
-        Integer height = csvLineTokens.length > 17 ? safeParseIntegerFrom(csvLineTokens[17]) : null;
-        String bats = csvLineTokens.length > 18 ? csvLineTokens[18] : null;
-        String shoots = csvLineTokens.length > 19 ? csvLineTokens[19] : null;
-        String dateOfDebutString = csvLineTokens.length > 20 ? csvLineTokens[20] : null;
-        String dateOfFinalGameString = csvLineTokens.length > 21 ? csvLineTokens[21] : null;
-        String retroID = csvLineTokens.length > 22 ? csvLineTokens[22] : null;
-        String bbrefID = csvLineTokens.length > 23 ? csvLineTokens[23] : null;
 
-        PlayerDTO.Builder playerDtoBuilder = new PlayerDTO.Builder(playerID);
+        PlayerDTO.Builder playerDtoBuilder = new PlayerDTO.Builder(playerRawData.playerID());
 
-        if (birthYear != null && birthMonth != null && birthDay != null) {
-            playerDtoBuilder.withDateOfBirth(birthYear, birthMonth, birthDay);
+        if (playerRawData.birthYear() != null && playerRawData.birthMonth() != null && playerRawData.birthDay() != null) {
+            playerDtoBuilder.withDateOfBirth(playerRawData.birthYear(), playerRawData.birthMonth(), playerRawData.birthDay());
         }
-        if (deathYear != null && deathMonth != null && deathDay != null) {
-            playerDtoBuilder.withDateOfBirth(deathYear, deathMonth, deathDay);
+        if (playerRawData.deathYear() != null && playerRawData.deathMonth() != null && playerRawData.deathDay() != null) {
+            playerDtoBuilder.withDateOfBirth(playerRawData.deathYear(), playerRawData.deathMonth(), playerRawData.deathDay());
         }
 
         return playerDtoBuilder
-                .withBirthCountry(birthCountry)
-                .withBirthState(birthState)
-                .withBirthCity(birthCity)
-                .withDeathCountry(deathCountry)
-                .withDeathState(deathState)
-                .withDeathCity(deathCity)
-                .withNameFirst(nameFirst)
-                .withNameLast(nameLast)
-                .withNameGiven(nameGiven)
-                .withBats(bats)
-                .withShoots(shoots)
-                .withDateOfDebut(dateOfDebutString)
-                .withDateOfFinalGame(dateOfFinalGameString)
-                .withRetroID(retroID)
-                .withBbrefID(bbrefID)
+                .withBirthCountry(playerRawData.birthCountry())
+                .withBirthState(playerRawData.birthState())
+                .withBirthCity(playerRawData.birthCity())
+                .withDeathCountry(playerRawData.deathCountry())
+                .withDeathState(playerRawData.deathState())
+                .withDeathCity(playerRawData.deathCity())
+                .withNameFirst(playerRawData.nameFirst())
+                .withNameLast(playerRawData.nameLast())
+                .withNameGiven(playerRawData.nameGiven())
+                .withBats(playerRawData.bats())
+                .withShoots(playerRawData.shoots())
+                .withDateOfDebut(playerRawData.dateOfDebutString())
+                .withDateOfFinalGame(playerRawData.dateOfFinalGameString())
+                .withRetroID(playerRawData.retroID())
+                .withBbrefID(playerRawData.bbrefID())
                 .build();
-    }
-
-    private Integer safeParseIntegerFrom(String str) {
-        try {
-            return Integer.parseInt(str);
-        } catch (NumberFormatException nfe) {
-            return null;
-        }
     }
 
 

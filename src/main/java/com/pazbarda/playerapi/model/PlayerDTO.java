@@ -1,13 +1,8 @@
 package com.pazbarda.playerapi.model;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
-import java.time.format.ResolverStyle;
-import java.util.Locale;
 import java.util.Objects;
 
-// playerID,birthYear,birthMonth,birthDay,birthCountry,birthState,birthCity,deathYear,deathMonth,deathDay,deathCountry,deathState,deathCity,nameFirst,nameLast,nameGiven,weight,height,bats,throws,debut,finalGame,retroID,bbrefID
 // TODO PB -- create a struct for place (Country, State, City)
 public class PlayerDTO {
     private final String playerID;
