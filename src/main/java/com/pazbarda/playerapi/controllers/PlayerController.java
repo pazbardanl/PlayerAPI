@@ -20,22 +20,34 @@ public class PlayerController {
     @Autowired
     private PlayerDAO playerDAO;
 
+    /**
+     * Get all player's IDs in a Set<String>
+    */
     @GetMapping("/api/players")
     public Set<String> getAllPlayerIDs() {
         return playerDAO.getPlayerIDs();
     }
 
+    /*
+    * Get player's data given the player's ID.
+    * */
     @GetMapping("/api/player/{playerID}")
     public PlayerDTO getPlayerByID(@PathVariable String playerID) {
         validatePlayerID(playerID);
         return playerDAO.getPlayer(playerID);
     }
 
+    /*
+    * exception handler for IllegalArgumentException
+    * */
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
+    /*
+     * exception handler for NoSuchElementException
+     * */
     @ExceptionHandler(NoSuchElementException.class)
     public ResponseEntity<String> handleNoSuchElementException(NoSuchElementException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);

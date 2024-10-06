@@ -3,9 +3,15 @@ package com.pazbarda.playerapi.services;
 import com.pazbarda.playerapi.model.PlayerRawData;
 import org.springframework.stereotype.Service;
 
+/*
+* Decode CSV lines into a Player's raw data. Handles all the mechanics of dealing with a CSV line.
+* */
 @Service
 public class PlayerCsvDecoder {
 
+    /*
+     * Decode CSV lines into a Player's raw data.
+     * */
     public PlayerRawData decode(String csvLine) {
         String[] csvLineTokens = csvLine.split(",");
         String playerID = csvLineTokens.length > 0 ? csvLineTokens[0] : null;

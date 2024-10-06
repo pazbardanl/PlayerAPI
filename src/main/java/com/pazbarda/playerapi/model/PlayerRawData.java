@@ -1,5 +1,8 @@
 package com.pazbarda.playerapi.model;
 
+/*
+ * Record for raw player data, usually after being parsed from a data source (ex: CSV) and before it is built into a Player DTO
+ * */
 public record PlayerRawData(
         String playerID,
         Integer birthYear,

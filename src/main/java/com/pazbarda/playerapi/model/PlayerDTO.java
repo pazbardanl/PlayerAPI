@@ -3,7 +3,9 @@ package com.pazbarda.playerapi.model;
 import java.time.LocalDate;
 import java.util.Objects;
 
-// TODO PB -- create a struct for place (Country, State, City)
+/*
+* Data Transfer Object for a player's data
+* */
 public class PlayerDTO {
     private final String playerID;
     private LocalDate dateOfBirth;
