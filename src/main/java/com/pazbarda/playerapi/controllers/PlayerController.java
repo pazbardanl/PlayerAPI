@@ -60,7 +60,7 @@ public class PlayerController {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
-    private void validatePlayerID(String playerID) {
+    private void validatePlayerID(String playerID) throws IllegalArgumentException {
         if (null == playerID || playerID.isBlank() || playerID.isEmpty()) {
             final String errorMessage = "player ID cannot be null, blank or empty string";
             logger.error(errorMessage);
